@@ -1,0 +1,47 @@
+speak:
+  name: Speak
+  description: Speak a message on the tablet using TTS.
+  fields:
+    message:
+      name: Message
+      description: The text to speak.
+      example: "Someone is at the front door."
+      required: true
+
+navigate:
+  name: Navigate
+  description: Change the URL/Dashboard showing on the tablet.
+  fields:
+    url:
+      name: URL
+      description: The target URL to open.
+      example: "https://your-ha-url.com/lovelace/kitchen"
+      required: true
+
+update_dashlet:
+  name: Update Dashlet
+  description: Update a native widget on the screensaver.
+  fields:
+    id:
+      name: ID
+      description: Unique ID for the dashlet.
+      example: "temp_ext"
+      required: true
+    label:
+      name: Label
+      description: Short description.
+      example: "Exterior"
+      required: true
+    value:
+      name: Value
+      description: The value to display.
+      example: "22.5"
+      required: true
+    unit:
+      name: Unit
+      description: Unit of measurement.
+      example: "°C"
+    icon:
+      name: Icon
+      description: MDI Icon name (future use).
+      example: "mdi:thermometer"
