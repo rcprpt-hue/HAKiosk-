@@ -1,0 +1,10 @@
+{
+  "domain": "hakiosk",
+  "name": "HAKiosk Integration",
+  "version": "1.0.0",
+  "documentation": "https://github.com/inforeis/ha-kiosk",
+  "dependencies": [],
+  "codeowners": ["@inforeis"],
+  "config_flow": true,
+  "iot_class": "local_polling"
+}
