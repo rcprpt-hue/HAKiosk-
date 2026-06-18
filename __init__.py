@@ -6,7 +6,7 @@ from homeassistant.const import CONF_HOST, CONF_PORT, Platform
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
-PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.NUMBER, Platform.CAMERA, Platform.SWITCH, Platform.BUTTON]
+PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.NUMBER, Platform.CAMERA, Platform.SWITCH, Platform.BUTTON, Platform.MEDIA_PLAYER]
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
@@ -21,14 +21,27 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     async def handle_speak(call):
         message = call.data.get("message")
         async with aiohttp.ClientSession() as session:
-            await session.get(f"http://{host}:{port}/notify?title=HAKiosk&message={message}")
+            async with session.get(f"http://{host}:{port}/speak", params={"message": message}) as response:
+                await response.read()
+
+    async def handle_notify(call):
+        title = call.data.get("title", "HAKiosk")
+        message = call.data.get("message")
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"http://{host}:{port}/notify", params={"title": title, "message": message}) as response:
+                await response.read()
+
+    async def handle_play(call):
+        url = call.data.get("url")
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"http://{host}:{port}/play", params={"url": url}) as response:
+                await response.read()
 
     async def handle_navigate(call):
         url = call.data.get("url")
-        # Note: We need a navigate endpoint in the app, or use existing remote command logic
-        # For now, let's assume /navigate?url= exists or use the remote system
         async with aiohttp.ClientSession() as session:
-            await session.get(f"http://{host}:{port}/navigate?url={url}")
+            async with session.get(f"http://{host}:{port}/navigate", params={"to": url}) as response:
+                await response.read()
 
     async def handle_dashlet(call):
         dash_id = call.data.get("id")
@@ -37,11 +50,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         unit = call.data.get("unit", "")
         icon = call.data.get("icon", "")
 
+        params = {"id": dash_id, "label": label, "value": value, "unit": unit, "icon": icon}
         async with aiohttp.ClientSession() as session:
-            url = f"http://{host}:{port}/dashlet?id={dash_id}&label={label}&value={value}&unit={unit}&icon={icon}"
-            await session.get(url)
+            async with session.get(f"http://{host}:{port}/dashlet", params=params) as response:
+                await response.read()
 
     hass.services.async_register(DOMAIN, "speak", handle_speak)
+    hass.services.async_register(DOMAIN, "notify", handle_notify)
+    hass.services.async_register(DOMAIN, "play", handle_play)
     hass.services.async_register(DOMAIN, "navigate", handle_navigate)
     hass.services.async_register(DOMAIN, "update_dashlet", handle_dashlet)
 
