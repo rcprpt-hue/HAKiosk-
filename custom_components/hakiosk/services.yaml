@@ -45,3 +45,27 @@ update_dashlet:
       name: Icon
       description: MDI Icon name (future use).
       example: "mdi:thermometer"
+
+notify:
+  name: Send Notification
+  description: Shows a notification popup on the tablet.
+  fields:
+    title:
+      name: Title
+      description: Title of the notification.
+      example: "Security Alert"
+    message:
+      name: Message
+      description: Body of the notification.
+      example: "Motion detected in the garden."
+      required: true
+
+play:
+  name: Play Audio
+  description: Play an audio file from a URL.
+  fields:
+    url:
+      name: URL
+      description: Direct link to the audio file.
+      example: "http://192.168.1.50:8123/local/doorbell.mp3"
+      required: true
